@@ -1,0 +1,85 @@
+% social buffering
+% aversive neutral: 27 trials in each condition
+% %%%%%%%%%  Markers for ERPs  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% anticipation aversive cue 11, neutral cue 21.
+% post sound  aversive sound 13 31, neutral sound 23 41
+% subjects in alone condition: 1 4 5 7 8 9 10 12 13 14 15 16 17 18 26 32 33 42 56 63 64 65 67 68 69 71 72 73 74
+% subjects in social condition: 19 20 22 24 25 27 28 29 30 31 34 36 39 41 66 75 76 43 45 46 47 48 50 51 52 54 55 57 58 60 61 62 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+clear all;
+clc;
+%% define the routin of the folder
+base_dir=strcat('D:\study\In Germany\data analysis for uploading or sharing\EDA raw data and proprocess script')
+cd (base_dir)
+% start EEGLAB under Matlab
+[ALLEEG EEG CURRENTSET ALLCOM] = eeglab; 
+alone=[1 4 5 7 8 9 10 12 13 14 15 16 17 18 26 32 33 42 56 63 64 65 67 68 69 71 72 73 74 78 81]; % subject number
+ingroup=[19 20 22 24 25 27 28 29 30 31 34 36 39 41 43 45 46 47 48 50 51 52 54 55 57 58 59 60 61 62 66 75 76 79 80];
+outgroup=[103:105 107:118 120:122 124:131 133 134 136 137 139]
+
+%% sound all the trials and three groups
+% sound: aloneaversive
+for i=1:length(alone)
+    setname= [num2str(alone(i)),'_aversivesound','.mat']; % EEGLAB data the file name
+    EEG = pop_loadset(setname);
+    EEG = pop_rmbase( EEG, [-1000     0]); 
+    aversivesound_alone(i,:,:)=squeeze(mean(EEG.data,3));  % make average on trials
+end 
+
+% sound: aloneneutral
+for i=1:length(alone)
+    setname= [num2str(alone(i)),'_neutralsound','.mat']; % EEGLAB data the file name
+    EEG = pop_loadset(setname);
+    EEG = pop_rmbase( EEG, [-1000     0]); 
+    neutralsound_alone(i,:,:)=squeeze(mean(EEG.data,3));  % make average on trials
+end 
+
+% sound: ingroupaversive
+for i=1:length(ingroup)
+    setname= [num2str(ingroup(i)),'_aversivesound','.mat']; % EEGLAB data the file name
+    EEG = pop_loadset(setname);
+    EEG = pop_rmbase( EEG, [-1000     0]); 
+    aversivesound_ingroup(i,:,:)=squeeze(mean(EEG.data,3));  % make average on trials
+end 
+
+% sound: ingroupneutral
+for i=1:length(ingroup)
+    setname= [num2str(ingroup(i)),'_neutralsound','.mat']; % EEGLAB data the file name
+    EEG = pop_loadset(setname);
+    EEG = pop_rmbase( EEG, [-1000     0]); 
+    neutralsound_ingroup(i,:,:)=squeeze(mean(EEG.data,3));  % make average on trials
+end 
+
+% sound: outgroupaversive
+for i=1:length(outgroup)
+    setname= [num2str(outgroup(i)),'_aversivesound','.mat']; % EEGLAB data the file name
+    EEG = pop_loadset(setname);
+    EEG = pop_rmbase( EEG, [-1000     0]); 
+    aversivesound_outgroup(i,:,:)=squeeze(mean(EEG.data,3));  % make average on trials
+end 
+
+% sound: outgroupneutral
+for i=1:length(outgroup)
+    setname= [num2str(outgroup(i)),'_neutralsound','.mat']; % EEGLAB data the file name
+    EEG = pop_loadset(setname);
+    EEG = pop_rmbase( EEG, [-1000     0]); 
+    neutralsound_outgroup(i,:,:)=squeeze(mean(EEG.data,3));  % make average on trials
+end 
+
+times = EEG.times; % time windows
+figure; %
+hold on; %holds the current plot and all axis properties so that subsequent graphing commands add to the existing graph.
+set(gca,'Xtick',[-1000:2000:10000],'Ytick',[-0.5:0.5:1.5],'fontsize',18); %to set the reverse Y Direction in the current figure window
+axis([-1000 10000 -0.5 1.5]);%AXIS([XMIN XMAX YMIN YMAX])
+plot(EEG.times, squeeze(mean(aversivesound_alone(:,1,:),1)),'-k','LineWidth',3); % plot(x,y)  -b  solid black  
+%plot(EEG.times, squeeze(mean(neutralsound_alone(:,1,:),1)),'-.k','LineWidth',3); % plot(x,y)  -g dashdot black 
+plot(EEG.times, squeeze(mean(aversivesound_ingroup(:,1,:),1)),'-','Color',[0.4 0.4 0.4],'LineWidth',3); % plot(x,y)  solid grey
+%plot(EEG.times, squeeze(mean(neutralsound_ingroup(:,1,:),1)),'-.','Color',[0.4 0.4 0.4],'LineWidth',3); % plot(x,y)  dashdot grey 
+plot(EEG.times, squeeze(mean(aversivesound_outgroup(:,1,:),1)),'-','Color',[0.7 0.7 0.7],'LineWidth',3); % plot(x,y)  solid grey
+%plot(EEG.times, squeeze(mean(neutralsound_outgroup(:,1,:),1)),'-.','Color',[0.7 0.7 0.7],'LineWidth',3); % plot(x,y)  dashdot grey 
+legend({'alone aversive',  'ingroup aversive', 'outgroup aversive'},'fontsize',22,'fontname','Arial'); %  LEGEND(string1,string2,string3, ...) puts a legend on the current plot
+legend('boxoff')
+title('sound presentation','fontname','Arial','fontsize',25); % TITLE('text','Property1',PropertyValue1,'Property2',PropertyValue2,...)sets the values of the specified properties of the title.
+xlabel('Latency (ms)','fontname','Arial','fontsize',22); % name of X axis
+ylabel('Amplitude (us)','fontname','Arial','fontsize',22);  % name of Y axis
+saveas(gcf,'D:\study\In Germany\SCR study\EADanalysis\raw data\aversivesound-three groups.pdf'); % Write current figure to prosocial.pdf file,
